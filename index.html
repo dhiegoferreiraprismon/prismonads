@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prismon Ads — Inteligência para suas campanhas de Meta Ads</title>
+  <meta name="description" content="Prismon Ads analisa suas campanhas de Meta Ads e fornece recomendações de otimização baseadas em dados. Conecte sua conta com segurança e tome decisões mais inteligentes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --c-bg: #0a0a0f;
+      --c-surface: #111118;
+      --c-surface-2: #18181f;
+      --c-border: rgba(255,255,255,0.07);
+      --c-border-2: rgba(255,255,255,0.12);
+      --c-text: #f0f0f5;
+      --c-text-2: #9999aa;
+      --c-text-3: #666677;
+      --c-accent: #6c63ff;
+      --c-accent-2: #8b84ff;
+      --c-accent-glow: rgba(108,99,255,0.15);
+      --c-gold: #f0c060;
+      --c-green: #4ade80;
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 20px;
+      --r-xl: 28px;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--c-accent-2); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--c-text); }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* GLOW BG */
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* LAYOUT */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 100px 0; }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 0;
+      background: rgba(10,10,15,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--c-text);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo span {
+      color: var(--c-accent-2);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--c-text-2);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--c-text); }
+
+    .nav-cta {
+      background: var(--c-accent);
+      color: #fff !important;
+      padding: 10px 22px;
+      border-radius: var(--r-md);
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--c-accent-2) !important;
+      transform: translateY(-1px);
+    }
+
+    /* HERO */
+    .hero {
+      padding: 180px 0 120px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--c-accent-glow);
+      border: 1px solid rgba(108,99,255,0.3);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 13px;
+      color: var(--c-accent-2);
+      font-weight: 500;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--c-accent-2);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: var(--c-text);
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--c-accent-2);
+    }
+
+    .hero-desc {
+      font-size: 18px;
+      color: var(--c-text-2);
+      max-width: 580px;
+      margin: 0 auto 40px;
+      font-weight: 300;
+      line-height: 1.7;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--c-accent);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: var(--r-md);
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: var(--c-accent-2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(108,99,255,0.3);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--c-text-2);
+      padding: 14px 28px;
+      border-radius: var(--r-md);
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid var(--c-border-2);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      color: var(--c-text);
+      border-color: rgba(255,255,255,0.2);
+      background: var(--c-surface);
+    }
+
+    .hero-trust {
+      margin-top: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--c-text-3);
+      font-size: 13px;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    .hero-trust svg { color: var(--c-green); }
+
+    /* STATS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--c-border);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-top: 80px;
+      animation: fadeUp 0.6s 0.5s ease both;
+    }
+
+    .stat-item {
+      background: var(--c-surface);
+      padding: 32px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--c-text);
+      letter-spacing: -1px;
+    }
+
+    .stat-num span { color: var(--c-accent-2); }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--c-text-3);
+      margin-top: 4px;
+    }
+
+    /* SECTION LABELS */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-accent-2);
+      margin-bottom: 16px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--c-accent-2);
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      color: var(--c-text);
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--c-text-2);
+      max-width: 540px;
+      font-weight: 300;
+    }
+
+    /* HOW IT WORKS */
+    .how-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .how-header .section-desc { margin: 0 auto; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(16.66% + 20px);
+      right: calc(16.66% + 20px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--c-border-2), transparent);
+    }
+
+    .step {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 32px;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .step:hover {
+      border-color: rgba(108,99,255,0.3);
+      transform: translateY(-4px);
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--c-accent-glow);
+      border: 1px solid rgba(108,99,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--c-accent-2);
+      margin-bottom: 20px;
+    }
+
+    .step h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 14px;
+      color: var(--c-text-2);
+      line-height: 1.6;
+    }
+
+    /* FEATURES */
+    .features-bg {
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .feature-card {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 32px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(108,99,255,0.25);
+      transform: translateY(-3px);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-sm);
+      background: var(--c-accent-glow);
+      border: 1px solid rgba(108,99,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--c-text-2);
+      line-height: 1.65;
+    }
+
+    /* DATA USAGE */
+    .data-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .data-info h2 { margin-bottom: 20px; }
+
+    .data-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .data-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 15px;
+      color: var(--c-text-2);
+    }
+
+    .data-list li::before {
+      content: '✓';
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--c-green);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .data-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-xl);
+      padding: 36px;
+    }
+
+    .data-card h3 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .data-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .data-item:last-child { border-bottom: none; }
+
+    .data-item-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--c-text);
+    }
+
+    .data-item-desc {
+      font-size: 13px;
+      color: var(--c-text-3);
+    }
+
+    /* SECURITY */
+    .security-bg {
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .security-card {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 28px;
+    }
+
+    .security-card h3 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .security-card p {
+      font-size: 13px;
+      color: var(--c-text-2);
+      line-height: 1.6;
+    }
+
+    /* WHO */
+    .who-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .who-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 28px;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+
+    .who-card:hover { border-color: rgba(108,99,255,0.3); }
+
+    .who-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .who-card h3 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 8px;
+    }
+
+    .who-card p {
+      font-size: 13px;
+      color: var(--c-text-2);
+      line-height: 1.6;
+    }
+
+    /* BENEFITS */
+    .benefits-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .benefits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .benefit-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .benefit-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--c-accent-2);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .benefit-item h4 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 4px;
+    }
+
+    .benefit-item p {
+      font-size: 14px;
+      color: var(--c-text-2);
+    }
+
+    .benefits-visual {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-xl);
+      padding: 32px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .metric-row:last-child { border-bottom: none; }
+
+    .metric-name {
+      font-size: 13px;
+      color: var(--c-text-2);
+    }
+
+    .metric-val {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--c-text);
+    }
+
+    .metric-val.good { color: var(--c-green); }
+    .metric-val.warn { color: var(--c-gold); }
+
+    .metric-bar-wrap {
+      flex: 1;
+      margin: 0 16px;
+      height: 4px;
+      background: var(--c-surface-2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .metric-bar {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--c-accent);
+    }
+
+    .metric-bar.good { background: var(--c-green); }
+    .metric-bar.warn { background: var(--c-gold); }
+
+    /* CONTACT */
+    .contact-bg {
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .contact-info h2 { margin-bottom: 16px; }
+
+    .contact-info p {
+      color: var(--c-text-2);
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--c-border);
+      font-size: 14px;
+      color: var(--c-text-2);
+    }
+
+    .contact-item:last-child { border-bottom: none; }
+
+    .contact-form {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-xl);
+      padding: 36px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--c-text-2);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--c-text);
+      font-family: var(--font-body);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: rgba(108,99,255,0.5);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    .form-group select option { background: var(--c-surface); }
+
+    .form-submit {
+      width: 100%;
+      background: var(--c-accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-md);
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .form-submit:hover {
+      background: var(--c-accent-2);
+      transform: translateY(-1px);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 60px 0 40px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 32px;
+    }
+
+    .footer-brand p {
+      font-size: 13px;
+      color: var(--c-text-3);
+      margin-top: 12px;
+      line-height: 1.6;
+      max-width: 240px;
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col ul li a {
+      font-size: 13px;
+      color: var(--c-text-3);
+      transition: color 0.2s;
+    }
+
+    .footer-col ul li a:hover { color: var(--c-text-2); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--c-text-3);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal a {
+      color: var(--c-text-3);
+      font-size: 12px;
+    }
+
+    .footer-legal a:hover { color: var(--c-text-2); }
+
+    /* NOTICE */
+    .notice {
+      background: rgba(108,99,255,0.06);
+      border: 1px solid rgba(108,99,255,0.2);
+      border-radius: var(--r-lg);
+      padding: 24px 28px;
+      margin-top: 32px;
+      font-size: 13px;
+      color: var(--c-text-2);
+      line-height: 1.7;
+    }
+
+    .notice strong { color: var(--c-text); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      section { padding: 64px 0; }
+      .hero { padding: 130px 0 80px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .data-layout { grid-template-columns: 1fr; }
+      .security-grid { grid-template-columns: 1fr; }
+      .who-grid { grid-template-columns: 1fr; }
+      .benefits-layout { grid-template-columns: 1fr; }
+      .contact-layout { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <div class="nav-logo">Prismon<span>Ads</span></div>
+      <ul class="nav-links">
+        <li><a href="#como-funciona">Como funciona</a></li>
+        <li><a href="#funcionalidades">Funcionalidades</a></li>
+        <li><a href="#dados">Uso de dados</a></li>
+        <li><a href="#seguranca">Segurança</a></li>
+        <li><a href="#contato" class="nav-cta">Fale conosco</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">Análise inteligente de Meta Ads</div>
+    <h1>Decisões mais inteligentes<br />para suas <em>campanhas</em></h1>
+    <p class="hero-desc">
+      Prismon Ads conecta-se à sua conta de Meta Ads, analisa o desempenho das suas campanhas e fornece recomendações baseadas em dados reais — para que você otimize resultados com mais precisão e menos esforço.
+    </p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn-primary">Solicitar acesso</a>
+      <a href="#como-funciona" class="btn-secondary">Como funciona</a>
+    </div>
+    <div class="hero-trust">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Conexão segura via OAuth 2.0 · Sem acesso a senhas · Dados não compartilhados
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">100<span>%</span></div>
+        <div class="stat-label">Transparência no uso de dados</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Ações executadas sem consentimento</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">LGPD</div>
+        <div class="stat-label">Em conformidade com a legislação</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section id="como-funciona">
+  <div class="container">
+    <div class="how-header">
+      <div class="section-label">Processo</div>
+      <h2>Como o Prismon Ads funciona</h2>
+      <p class="section-desc">Um fluxo simples, transparente e seguro — do acesso à recomendação.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Você conecta sua conta</h3>
+        <p>Autorize o acesso via OAuth 2.0, o protocolo oficial do Meta. Nenhuma senha é solicitada ou armazenada. Você mantém controle total sobre as permissões.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Analisamos seus dados</h3>
+        <p>O Prismon Ads lê os dados de performance das suas campanhas — métricas, orçamentos e resultados — exclusivamente para fins de análise e diagnóstico.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Você recebe recomendações</h3>
+        <p>Com base nos dados analisados, o sistema apresenta recomendações de otimização. Toda ação só é executada após sua aprovação explícita.</p>
+      </div>
+    </div>
+    <div class="notice">
+      <strong>Importante:</strong> O Prismon Ads é uma ferramenta de análise e apoio à decisão. O sistema não executa alterações nas suas campanhas de forma autônoma. Todas as recomendações são apresentadas ao usuário, que decide se deseja aplicá-las ou não.
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section id="funcionalidades" class="features-bg">
+  <div class="container">
+    <div class="section-label">Funcionalidades</div>
+    <h2>O que o Prismon Ads oferece</h2>
+    <p class="section-desc">Ferramentas desenvolvidas para gestores de tráfego e anunciantes que tomam decisões baseadas em dados.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Análise de performance</h3>
+        <p>Visualize CPA, ROAS, CPM, CTR e demais métricas das suas campanhas em uma interface organizada e de fácil interpretação — sem precisar navegar pelo Gerenciador de Anúncios.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💡</div>
+        <h3>Recomendações de otimização</h3>
+        <p>Com base na análise dos dados históricos e atuais, o sistema identifica oportunidades de melhoria e sugere ações concretas para aumentar o desempenho das campanhas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Gestão de orçamento</h3>
+        <p>Acompanhe a distribuição de verba entre campanhas e conjuntos de anúncios. O sistema identifica desequilíbrios e sugere ajustes para maximizar o retorno sobre o investimento.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Diagnóstico automatizado</h3>
+        <p>Identifique rapidamente campanhas com desempenho abaixo do esperado, anúncios em fase de aprendizado e oportunidades de escala — tudo organizado em uma única visão.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Organização de campanhas</h3>
+        <p>Visualize e organize todas as suas campanhas, conjuntos e anúncios de forma estruturada. Filtros avançados para encontrar rapidamente o que você precisa analisar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Insights automatizados</h3>
+        <p>Receba análises periódicas sobre o comportamento das suas campanhas, tendências de performance e alertas sobre variações relevantes nos seus principais indicadores.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DADOS -->
+<section id="dados">
+  <div class="container">
+    <div class="data-layout">
+      <div class="data-info">
+        <div class="section-label">Uso de dados</div>
+        <h2>Como utilizamos os dados da sua conta</h2>
+        <p class="section-desc">Transparência total sobre quais dados acessamos, por que os acessamos e como os protegemos.</p>
+        <ul class="data-list">
+          <li>Você autoriza o acesso voluntariamente via Meta Login — nunca solicitamos sua senha</li>
+          <li>Acessamos apenas os dados necessários para análise de campanhas</li>
+          <li>Nenhum dado é vendido, compartilhado ou utilizado fora da finalidade do produto</li>
+          <li>Você pode revogar o acesso a qualquer momento diretamente nas configurações do Meta</li>
+          <li>Os dados são utilizados exclusivamente para gerar análises e recomendações para você</li>
+          <li>Não utilizamos seus dados para treinamento de modelos externos</li>
+        </ul>
+      </div>
+      <div class="data-card">
+        <h3>Dados que acessamos via API do Meta</h3>
+        <div class="data-item">
+          <div class="data-item-label">Métricas de campanhas</div>
+          <div class="data-item-desc">Impressões, cliques, conversões, CPA, ROAS, CPM, CTR e demais métricas de performance</div>
+        </div>
+        <div class="data-item">
+          <div class="data-item-label">Estrutura das campanhas</div>
+          <div class="data-item-desc">Nome, status, orçamento e configurações das campanhas, conjuntos e anúncios</div>
+        </div>
+        <div class="data-item">
+          <div class="data-item-label">Dados de investimento</div>
+          <div class="data-item-desc">Verba diária, mensal e histórico de gastos por campanha e conjunto de anúncios</div>
+        </div>
+        <div class="data-item">
+          <div class="data-item-label">Dados NÃO acessados</div>
+          <div class="data-item-desc">Dados pessoais de terceiros, informações de pagamento, mensagens privadas ou qualquer dado fora do escopo de anúncios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGURANÇA -->
+<section id="seguranca" class="security-bg">
+  <div class="container">
+    <div class="section-label">Segurança e privacidade</div>
+    <h2>Sua conta protegida em todos os níveis</h2>
+    <p class="section-desc">Construído com os mais altos padrões de segurança e em conformidade com as políticas do Meta e a legislação brasileira.</p>
+
+    <div class="security-grid">
+      <div class="security-card">
+        <h3>🔐 OAuth 2.0 oficial</h3>
+        <p>A autenticação é realizada exclusivamente via protocolo OAuth 2.0, o método oficial e seguro do Meta. Nenhuma senha é solicitada, armazenada ou processada pelo Prismon Ads.</p>
+      </div>
+      <div class="security-card">
+        <h3>🛡️ Conformidade com Meta</h3>
+        <p>O Prismon Ads opera dentro dos termos de uso da API do Meta, seguindo todas as diretrizes da Plataforma para desenvolvedores e as políticas de dados do Facebook.</p>
+      </div>
+      <div class="security-card">
+        <h3>📋 LGPD</h3>
+        <p>Operamos em conformidade com a Lei Geral de Proteção de Dados (Lei 13.709/2018). Seus dados são tratados com base legal adequada e você possui todos os direitos previstos na lei.</p>
+      </div>
+      <div class="security-card">
+        <h3>🔒 Criptografia</h3>
+        <p>Todas as comunicações entre o Prismon Ads e a API do Meta são realizadas via HTTPS com criptografia TLS. Os dados armazenados são protegidos com criptografia em repouso.</p>
+      </div>
+      <div class="security-card">
+        <h3>⚡ Controle total do usuário</h3>
+        <p>Você pode desconectar sua conta do Meta a qualquer momento, tanto pelo painel do Prismon Ads quanto diretamente nas configurações de aplicativos do seu perfil no Facebook.</p>
+      </div>
+      <div class="security-card">
+        <h3>🚫 Sem ações autônomas</h3>
+        <p>O sistema não executa alterações nas suas campanhas sem sua aprovação explícita. Todas as recomendações são apresentadas para sua revisão antes de qualquer ação.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUEM PODE USAR -->
+<section id="quem-pode-usar">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:48px;">
+      <div class="section-label">Público</div>
+      <h2>Para quem é o Prismon Ads</h2>
+      <p class="section-desc" style="margin:0 auto;">Desenvolvido para profissionais e empresas que anunciam no Meta Ads e buscam resultados mais consistentes.</p>
+    </div>
+    <div class="who-grid">
+      <div class="who-card">
+        <div class="who-icon">🏪</div>
+        <h3>Donos de e-commerce</h3>
+        <p>Empresas que vendem online e utilizam Meta Ads como canal de aquisição de clientes, buscando mais eficiência no investimento em anúncios.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">📣</div>
+        <h3>Gestores de tráfego</h3>
+        <p>Profissionais que gerenciam campanhas de Meta Ads para múltiplos clientes e precisam de uma visão organizada e analítica das contas.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">🏢</div>
+        <h3>Anunciantes no Meta</h3>
+        <p>Empresas de qualquer porte que investem em Meta Ads e desejam uma camada adicional de análise e inteligência para otimizar seus resultados.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFÍCIOS -->
+<section id="beneficios" style="background:var(--c-surface); border-top:1px solid var(--c-border); border-bottom:1px solid var(--c-border);">
+  <div class="container">
+    <div class="benefits-layout">
+      <div>
+        <div class="section-label">Benefícios</div>
+        <h2>O que você ganha com o Prismon Ads</h2>
+        <div class="benefits-list" style="margin-top:32px;">
+          <div class="benefit-item">
+            <div class="benefit-dot"></div>
+            <div>
+              <h4>Mais clareza sobre o desempenho</h4>
+              <p>Visualize todas as métricas que importam em uma interface organizada, sem precisar navegar por múltiplas telas do Gerenciador de Anúncios.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-dot"></div>
+            <div>
+              <h4>Decisões baseadas em dados</h4>
+              <p>Recomendações concretas e fundamentadas nos dados reais das suas campanhas — sem achismos ou suposições.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-dot"></div>
+            <div>
+              <h4>Economia de tempo na análise</h4>
+              <p>Diagnósticos automatizados que reduzem o tempo gasto em análises manuais, liberando foco para a estratégia.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-dot"></div>
+            <div>
+              <h4>Identificação rápida de problemas</h4>
+              <p>Alertas e diagnósticos que identificam campanhas com desempenho abaixo do esperado antes que o problema escale.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-dot"></div>
+            <div>
+              <h4>Melhor aproveitamento do orçamento</h4>
+              <p>Identificação de oportunidades de redistribuição de verba para campanhas e conjuntos com melhor performance.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="benefits-visual">
+        <div style="font-size:13px; font-weight:600; color:var(--c-text-3); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:20px;">Visão de performance</div>
+        <div class="metric-row">
+          <div class="metric-name">ROAS</div>
+          <div class="metric-bar-wrap"><div class="metric-bar good" style="width:78%"></div></div>
+          <div class="metric-val good">3.8x</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">CPA</div>
+          <div class="metric-bar-wrap"><div class="metric-bar good" style="width:65%"></div></div>
+          <div class="metric-val good">R$42</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">CTR</div>
+          <div class="metric-bar-wrap"><div class="metric-bar warn" style="width:40%"></div></div>
+          <div class="metric-val warn">1.2%</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">CPM</div>
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:55%"></div></div>
+          <div class="metric-val">R$18</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-name">Conversões</div>
+          <div class="metric-bar-wrap"><div class="metric-bar good" style="width:82%"></div></div>
+          <div class="metric-val good">247</div>
+        </div>
+        <div style="margin-top:20px; padding:14px; background:rgba(108,99,255,0.08); border:1px solid rgba(108,99,255,0.2); border-radius:var(--r-md); font-size:13px; color:var(--c-text-2);">
+          💡 <strong style="color:var(--c-text);">Recomendação:</strong> O conjunto "Público Frio — Interesses" apresenta CTR 40% abaixo da média. Considere revisar o criativo ou ajustar a segmentação.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato" class="contact-bg">
+  <div class="container">
+    <div class="contact-layout">
+      <div class="contact-info">
+        <div class="section-label">Contato</div>
+        <h2>Fale com nossa equipe</h2>
+        <p>Tem dúvidas sobre o Prismon Ads, nossa política de dados ou deseja solicitar acesso à plataforma? Entre em contato.</p>
+        <div class="contact-item">
+          <span>📧</span>
+          <span>contato@prismonads.com</span>
+        </div>
+        <div class="contact-item">
+          <span>🌐</span>
+          <span>prismonads.com</span>
+        </div>
+        <div class="contact-item">
+          <span>📋</span>
+          <span>Respondemos em até 2 dias úteis</span>
+        </div>
+        <div class="notice" style="margin-top:24px;">
+          Para solicitações relacionadas à <strong>privacidade de dados</strong> ou exercício de direitos previstos na LGPD, utilize o e-mail <strong>privacidade@prismonads.com</strong>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="form-group">
+          <label>Nome completo</label>
+          <input type="text" placeholder="Seu nome" />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" placeholder="seu@email.com" />
+        </div>
+        <div class="form-group">
+          <label>Assunto</label>
+          <select>
+            <option value="">Selecione um assunto</option>
+            <option>Solicitar acesso à plataforma</option>
+            <option>Dúvidas sobre funcionalidades</option>
+            <option>Política de privacidade e dados</option>
+            <option>Suporte técnico</option>
+            <option>Outros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea placeholder="Descreva sua dúvida ou solicitação..."></textarea>
+        </div>
+        <button class="form-submit">Enviar mensagem</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo">Prismon<span>Ads</span></div>
+        <p>Análise e otimização de campanhas de Meta Ads baseadas em dados reais.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Produto</h4>
+        <ul>
+          <li><a href="#como-funciona">Como funciona</a></li>
+          <li><a href="#funcionalidades">Funcionalidades</a></li>
+          <li><a href="#quem-pode-usar">Para quem é</a></li>
+          <li><a href="#beneficios">Benefícios</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Política de Privacidade</a></li>
+          <li><a href="terms.html">Termos de Uso</a></li>
+          <li><a href="#dados">Uso de dados</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Prismon Ads. Todos os direitos reservados.</span>
+      <div class="footer-legal">
+        <a href="privacy.html">Política de Privacidade</a>
+        <a href="terms.html">Termos de Uso</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
