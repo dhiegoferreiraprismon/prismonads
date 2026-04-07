@@ -1,0 +1,50 @@
+.weather-dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f8ff;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.weather-dashboard h1 {
+    font-size: 2.5em;
+    margin: 20px 0;
+}
+
+.weather-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.weather-card h2 {
+    font-size: 1.5em;
+    margin: 10px 0;
+}
+
+.weather-card p {
+    font-size: 1em;
+    margin: 5px 0;
+}
+
+.temp {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.icon {
+    width: 50px;
+    height: 50px;
+}
+
+.footer {
+    margin-top: auto;
+    padding: 10px;
+    background-color: #e0e0e0;
+    width: 100%;
+    text-align: center;
+}
